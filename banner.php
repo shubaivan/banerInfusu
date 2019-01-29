@@ -1,5 +1,5 @@
 <?php
-$mysqli = new DB('test', 'root', '3022666', 'localhost', 'visitors');
+$mysqli = new DB('test', 'root', '', 'localhost', 'visitors');
 $result = $mysqli->connect();
 $connection = $mysqli->getCon();
 
