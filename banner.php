@@ -38,16 +38,22 @@ if ($result) {
 
 class Image
 {
+    /**
+     * @var string
+     */
     private $imageName;
 
-    public function __construct($imageName)
+    /**
+     * Image constructor.
+     * @param string $imageName
+     */
+    public function __construct(string $imageName)
     {
         $this->imageName = $imageName;
     }
 
     public function createImage()
     {
-
         // Создаём пустое изображение и добавляем текст
         $im = imagecreatetruecolor(120, 20);
         $text_color = imagecolorallocate($im, 233, 14, 91);
@@ -74,15 +80,46 @@ class Image
 
 class DB
 {
+    /**
+     * @var string
+     */
     private $mysqliName;
-    private $mysqliUser;
-    private $mysqliPass;
-    private $mysqliHost;
-    private $table;
-    private $con;
 
-    public function __construct($mysqliName, $mysqliUser, $mysqliPass, $mysqliHost, $table)
-    {
+    /**
+     * @var string
+     */
+    private $mysqliUser;
+
+    /**
+     * @var string
+     */
+    private $mysqliPass;
+
+    /**
+     * @var string
+     */
+    private $mysqliHost;
+
+    /**
+     * @var string
+     */
+    private $table;
+
+    /**
+     * DB constructor.
+     * @param string $mysqliName
+     * @param string $mysqliUser
+     * @param string $mysqliPass
+     * @param string $mysqliHost
+     * @param string $table
+     */
+    public function __construct(
+        $mysqliName,
+        $mysqliUser,
+        $mysqliPass,
+        $mysqliHost,
+        $table
+    ) {
         $this->dbName = $mysqliName;
         $this->dbUser = $mysqliUser;
         $this->dbPass = $mysqliPass;
@@ -90,6 +127,9 @@ class DB
         $this->table = $table;
     }
 
+    /**
+     * @return bool
+     */
     public function connect()
     {
         $connectionnectDb = new mysqli(
@@ -164,34 +204,48 @@ class Visitor
      * @var string
      */
     protected $ip;
+
     /**
      * @var string
      */
     protected $userAgent;
+
     /**
      * @var string
      */
     protected $viewDate;
+
     /**
      * @var string
      */
     protected $url;
+
     /**
      * @var int
      */
     protected $count = 0;
+
     /**
      * @var mysqli
      */
     protected $connection;
 
+    /**
+     * Visitor constructor.
+     * @param string $ip
+     * @param string $userAgent
+     * @param string $viewDate
+     * @param string $url
+     * @param mysqli $connection
+     */
     public function __construct(
         $ip,
         $userAgent,
         $viewDate,
         $url,
-        $connection
-    ) {
+        mysqli $connection
+    )
+    {
         $this->ip = $ip;
         $this->userAgent = $userAgent;
         $this->viewDate = $viewDate;
@@ -199,15 +253,15 @@ class Visitor
         $this->connection = $connection;
     }
 
+    /**
+     * @return void
+     */
     public function visit()
     {
         $result = $this->checkIfVisitorExist($this->ip, $this->userAgent, $this->url);
         if (!$result) {
-
             $this->createNewVisitor($this->ip, $this->userAgent, $this->url, $this->viewDate);
-
         } else {
-
             $id = (int)$result['id'];
             $lastCount = (int)$result['views_count'];
 
@@ -220,7 +274,7 @@ class Visitor
         $stmt = $this->connection->prepare("
             SELECT * FROM visitors WHERE ip_address= ? AND user_agent= ? AND page_url= ? LIMIT 1
         ");
-        $stmt->bind_param("sss", $ip,$userAgent,$url);
+        $stmt->bind_param("sss", $ip, $userAgent, $url);
         $stmt->execute();
         $getResult = $stmt->get_result();
         $numRows = $getResult->num_rows;
@@ -233,6 +287,13 @@ class Visitor
         return false;
     }
 
+    /**
+     * @param $ip
+     * @param $userAgent
+     * @param $url
+     * @param $viewDate
+     * @return bool
+     */
     private function createNewVisitor($ip, $userAgent, $url, $viewDate)
     {
         $stmt = $this->connection->prepare("
@@ -253,6 +314,12 @@ class Visitor
         return false;
     }
 
+    /**
+     * @param int $id
+     * @param int $lastCount
+     * @param string $viewDate
+     * @return bool
+     */
     private function updateVisitor($id, $lastCount, $viewDate)
     {
         $newCount = $lastCount + 1;
@@ -273,7 +340,6 @@ class Visitor
 
         return false;
     }
-
 }
 
 
